@@ -59,7 +59,7 @@ export const Header: React.FC<HeaderProps> = ({
                   : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
               }`}
             >
-              Audit Hari Bursa
+              Matriks Kalender
             </button>
             <button
               onClick={() => setActiveTab('guidelines')}
