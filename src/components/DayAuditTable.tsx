@@ -14,14 +14,16 @@ import {
   Clock,
   Sparkles,
 } from 'lucide-react';
-import { TimelineResult, DayAuditItem, StageMilestone } from '../types';
+import { TimelineResult, DayAuditItem, StageMilestone, Holiday } from '../types';
 import { INDONESIAN_MONTHS, INDONESIAN_DAYS } from '../utils/calculator';
+import { INITIAL_HOLIDAYS } from '../data/holidays';
 
 interface DayAuditTableProps {
   timeline: TimelineResult;
+  holidays?: Holiday[];
 }
 
-export const DayAuditTable: React.FC<DayAuditTableProps> = ({ timeline }) => {
+export const DayAuditTable: React.FC<DayAuditTableProps> = ({ timeline, holidays = INITIAL_HOLIDAYS }) => {
   // View mode switcher: Matriks Kalender (as requested) vs Tabel Rincian Harian
   const [subView, setSubView] = useState<'matrix' | 'table'>('matrix');
   const [filterMode, setFilterMode] = useState<'all' | 'trading_only' | 'holidays_only' | 'milestones_only'>('all');
@@ -31,6 +33,17 @@ export const DayAuditTable: React.FC<DayAuditTableProps> = ({ timeline }) => {
     dateStr: string;
     tradingCounter?: number;
   } | null>(null);
+
+  // Quick lookup for holidays from holidays.csv / Holiday data
+  const holidaysMap = useMemo(() => {
+    const map = new Map<string, Holiday>();
+    holidays.forEach((h) => {
+      if (h.enabled) {
+        map.set(h.date, h);
+      }
+    });
+    return map;
+  }, [holidays]);
 
   // Month navigation in calendar matrix: determine default month from timeline milestones or target
   const initialDate = useMemo(() => {
@@ -112,6 +125,7 @@ export const DayAuditTable: React.FC<DayAuditTableProps> = ({ timeline }) => {
       isSaturday: boolean;
       isWeekend: boolean;
       auditItem?: DayAuditItem;
+      holiday?: Holiday;
       milestone?: StageMilestone;
     }> = [];
 
@@ -145,12 +159,13 @@ export const DayAuditTable: React.FC<DayAuditTableProps> = ({ timeline }) => {
         isSaturday: isSat,
         isWeekend: isSun || isSat,
         auditItem: auditMap.get(dateStr),
+        holiday: holidaysMap.get(dateStr),
         milestone: milestoneMap.get(dateStr),
       });
     }
 
     return cells;
-  }, [currentYear, currentMonth, auditMap, milestoneMap]);
+  }, [currentYear, currentMonth, auditMap, milestoneMap, holidaysMap]);
 
   // Excel (.xls HTML table based, recognized seamlessly by Microsoft Excel, LibreOffice, and Google Sheets)
   const exportExcel = () => {
@@ -495,7 +510,13 @@ export const DayAuditTable: React.FC<DayAuditTableProps> = ({ timeline }) => {
                   const isTahap2 = cell.milestone?.stageNumber === 2;
                   const isTahap4 = cell.milestone?.stageNumber === 4;
 
-                  const hasHoliday = cell.auditItem?.isHoliday && !cell.isWeekend;
+                  // Holiday is determined either from timeline auditItem OR directly from holidays.csv (holiday)
+                  const holidayInfo = cell.auditItem?.holidayName 
+                    ? { name: cell.auditItem.holidayName, isCuti: cell.auditItem.holidayName.toLowerCase().includes('cuti') }
+                    : cell.holiday
+                    ? { name: cell.holiday.name, isCuti: cell.holiday.isJointHoliday }
+                    : null;
+                  const hasHoliday = !!holidayInfo && !cell.isWeekend;
                   const isTrading = cell.auditItem?.isExchangeTradingDay;
 
                   // Today check
@@ -511,7 +532,7 @@ export const DayAuditTable: React.FC<DayAuditTableProps> = ({ timeline }) => {
                           : cell.milestone
                           ? 'bg-gradient-to-b from-blue-50/90 to-indigo-50/60 border-blue-300 shadow-xs'
                           : hasHoliday
-                          ? 'bg-rose-50/60 border-rose-200'
+                          ? 'bg-rose-50/70 border-rose-200 hover:border-rose-300'
                           : cell.isWeekend
                           ? 'bg-slate-50/60 border-slate-200/70 text-slate-400'
                           : 'bg-white border-slate-200/90 hover:border-slate-300 hover:shadow-xs'
@@ -527,6 +548,8 @@ export const DayAuditTable: React.FC<DayAuditTableProps> = ({ timeline }) => {
                               ? 'text-rose-600'
                               : cell.isSaturday
                               ? 'text-amber-600'
+                              : hasHoliday
+                              ? 'text-rose-700'
                               : 'text-slate-800'
                           }`}
                         >
@@ -618,19 +641,45 @@ export const DayAuditTable: React.FC<DayAuditTableProps> = ({ timeline }) => {
                           </div>
                         )}
 
-                        {/* Public Holiday Pill */}
+                        {/* Public Holiday Pill (from holiday.csv / calendar) */}
                         {hasHoliday && !cell.milestone && (
-                          <div className="p-1 rounded bg-rose-100/90 text-rose-800 border border-rose-200 text-[10px] font-medium leading-tight">
-                            <span className="font-bold block text-[9px] uppercase text-rose-900">Libur Bursa</span>
-                            <span className="line-clamp-1">{cell.auditItem?.holidayName}</span>
+                          <div 
+                            title={holidayInfo?.name}
+                            className="p-1 rounded bg-rose-100 text-rose-800 border border-rose-200/90 text-[10px] font-medium leading-tight shadow-2xs group/holiday relative"
+                          >
+                            <span className="font-extrabold block text-[9px] uppercase tracking-tight text-rose-900 flex items-center justify-between">
+                              <span>{holidayInfo?.isCuti ? 'Cuti Bersama' : 'Libur Bursa'}</span>
+                              <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                            </span>
+                            <span className="line-clamp-2 mt-0.5 text-[10px] font-semibold text-rose-900 leading-tight">
+                              {holidayInfo?.name}
+                            </span>
+
+                            {/* Floating tooltip hover for long holiday names */}
+                            <div className="hidden group-hover/holiday:block absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-48 p-2 bg-slate-900 text-white text-[10px] rounded-lg shadow-xl border border-slate-700 z-50 pointer-events-none">
+                              <span className="text-rose-300 font-bold block mb-0.5">
+                                {holidayInfo?.isCuti ? 'Cuti Bersama BEI' : 'Libur Nasional / Bursa'}
+                              </span>
+                              <p className="text-slate-100 font-medium leading-tight">{holidayInfo?.name}</p>
+                            </div>
                           </div>
                         )}
 
-                        {/* Weekend label if in timeline audit range */}
-                        {cell.isWeekend && cell.auditItem && !cell.milestone && (
+                        {/* Weekend label if no milestone or holiday */}
+                        {cell.isWeekend && !cell.milestone && !cell.holiday && (
                           <span className="text-[10px] text-slate-400 font-mono block text-center">
                             Tutup
                           </span>
+                        )}
+
+                        {/* Weekend with holiday name */}
+                        {cell.isWeekend && cell.holiday && !cell.milestone && (
+                          <div 
+                            title={cell.holiday.name}
+                            className="p-1 rounded bg-rose-50 text-rose-700 border border-rose-200/60 text-[9px] font-medium leading-tight"
+                          >
+                            <span className="line-clamp-1">{cell.holiday.name}</span>
+                          </div>
                         )}
                       </div>
 
