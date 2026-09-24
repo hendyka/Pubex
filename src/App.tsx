@@ -18,15 +18,13 @@ import {
   addTradingDays,
 } from './utils/calculator';
 
-const STORAGE_KEY_CONFIG = 'pubex_timeline_config_v1';
+const STORAGE_KEY_CONFIG = 'pubex_timeline_config_v2';
 const STORAGE_KEY_HOLIDAYS = 'pubex_timeline_holidays_v1';
 
 export default function App() {
-  // Determine default target date: 15 trading days from current time
-  const defaultTargetDate = useMemo(() => {
-    const base = new Date();
-    // Default 15 trading days ahead for a realistic upcoming Pubex
-    return toDateString(addTradingDays(base, 15, INITIAL_HOLIDAYS));
+  // Today's date as ISO string (YYYY-MM-DD)
+  const todayStr = useMemo(() => {
+    return toDateString(new Date());
   }, []);
 
   // Holidays state
@@ -40,7 +38,7 @@ export default function App() {
     return INITIAL_HOLIDAYS;
   });
 
-  // Config state
+  // Config state: Default mode 'forward_from_announcement' with today's date
   const [config, setConfig] = useState<PubexConfig>(() => {
     // Check URL parameters first
     const params = new URLSearchParams(window.location.search);
@@ -52,7 +50,7 @@ export default function App() {
 
     if (urlDate) {
       return {
-        calculationMode: urlMode || 'backward_from_event',
+        calculationMode: urlMode || 'forward_from_announcement',
         targetDate: urlDate,
         companyName: urlName || 'PT Perusahaan Terbuka Tbk',
         stockCode: urlCode || 'EMTN',
@@ -72,8 +70,8 @@ export default function App() {
     }
 
     return {
-      calculationMode: 'backward_from_event',
-      targetDate: defaultTargetDate,
+      calculationMode: 'forward_from_announcement',
+      targetDate: todayStr,
       companyName: 'PT Perusahaan Terbuka Tbk',
       stockCode: 'EMTN',
       pubexType: 'tahunan',
@@ -141,8 +139,8 @@ export default function App() {
 
   const handleResetToDefault = () => {
     setConfig({
-      calculationMode: 'backward_from_event',
-      targetDate: defaultTargetDate,
+      calculationMode: 'forward_from_announcement',
+      targetDate: todayStr,
       companyName: 'PT Perusahaan Terbuka Tbk',
       stockCode: 'EMTN',
       pubexType: 'tahunan',
@@ -197,21 +195,33 @@ export default function App() {
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 print:hidden">
-        {/* Top Info Banner */}
-        <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-3 p-4 bg-white rounded-xl border border-slate-200 text-xs">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse shrink-0" />
-            <span className="font-semibold text-slate-800">
-              Kalkulator Kepatuhan Public Expose Bursa Efek Indonesia
-            </span>
-            <span className="text-slate-400">·</span>
-            <span className="text-slate-600 font-mono">Kep-00087/BEI/12-2025</span>
-          </div>
-          <div className="flex items-center gap-2 text-slate-500">
-            <span>Standar Perhitungan:</span>
-            <span className="font-semibold text-slate-900 bg-slate-100 px-2 py-0.5 rounded font-mono">
-              Hari Bursa (Trading Days)
-            </span>
+        {/* Top Info Banner - Modern Eye-Catching Hero */}
+        <div className="mb-6 relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-950 p-5 sm:p-6 text-white shadow-xl border border-indigo-900/50">
+          {/* Subtle glowing ambient background spots */}
+          <div className="absolute -top-12 -right-12 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-1.5">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-500/20 text-blue-200 border border-blue-500/30 font-mono">
+                  Kep-00087/BEI/12-2025 · Peraturan I-E
+                </span>
+              </div>
+              <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-blue-200 bg-clip-text text-transparent">
+                Kalkulator Timeline Public Expose BEI
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
+                Penghitung otomatis 4 tahapan kepatuhan Paparan Publik Perusahaan Tercatat dengan perhitungan Hari Bursa akurat, checklist dokumen, dan kalender interaktif.
+              </p>
+            </div>
+
+            <div className="flex md:flex-col items-center md:items-end justify-between gap-2 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-white/10">
+              <span className="text-[11px] text-slate-400 font-medium">Metode Perhitungan:</span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold text-amber-300 bg-amber-950/60 border border-amber-600/40 shadow-xs">
+                <span>Hari Bursa (Trading Days)</span>
+              </span>
+            </div>
           </div>
         </div>
 
