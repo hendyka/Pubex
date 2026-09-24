@@ -1,7 +1,7 @@
 # 📊 Kalkulator Timeline Public Expose (Paparan Publik - Peraturan BEI No. I-E)
 
 [![Vercel Deployment](https://img.shields.io/badge/Vercel-Deployed-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://publicexpose-iota.vercel.app/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://github.com/hendyka/Pubex/blob/main/LICENSE.md)
 [![BEI Compliance](https://img.shields.io/badge/BEI-Peraturan%20I--E-blue?style=for-the-badge)](https://www.idx.co.id)
 
 > **Aplikasi web untuk menghitung dan mensimulasikan alur waktu (timeline) serta batas akhir (deadlines) pelaksanaan Public Expose (Paparan Publik) Perusahaan Terbuka (Tbk) secara otomatis sesuai Peraturan BEI Nomor I-E.**
@@ -127,7 +127,7 @@ Buka peramban Anda dan akses [http://localhost:3000](http://localhost:3000).
 
 ## 📄 Lisensi
 
-Proyek ini dilisensikan di bawah **MIT License** – Anda bebas untuk menggunakan, menyalin, memodifikasi, menggabungkan, mempublikasikan, dan mendistribusikan perangkat lunak ini secara gratis. Lihat berkas [LICENSE](LICENSE) untuk detail selengkapnya.
+Proyek ini dilisensikan di bawah **MIT License** – Anda bebas untuk menggunakan, menyalin, memodifikasi, menggabungkan, mempublikasikan, dan mendistribusikan perangkat lunak ini secara gratis. Lihat berkas [LICENSE](https://github.com/hendyka/Pubex/blob/main/LICENSE.md) untuk detail selengkapnya.
 
 ---
 
