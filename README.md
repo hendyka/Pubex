@@ -135,4 +135,4 @@ Proyek ini dilisensikan di bawah **MIT License** – Anda bebas untuk menggunaka
 
 * **Developer:** [Hendika Darma Listianto](https://www.linkedin.com/in/hendika-listianto-706b27352/)
 * **GitHub:** [@hendyka](https://github.com/hendyka)
-* **Web App:** [https://rups-new.vercel.app/](https://publicexpose-iota.vercel.app/)
+* **Web App:** [https://publicexpose-iota.vercel.app/](https://publicexpose-iota.vercel.app/)
