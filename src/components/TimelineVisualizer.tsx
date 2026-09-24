@@ -52,40 +52,56 @@ export const TimelineVisualizer: React.FC<TimelineVisualizerProps> = ({ timeline
 
   return (
     <div className="space-y-6">
-      {/* Overview Metric Banner */}
-      <div className="bg-slate-900 text-white rounded-xl p-5 shadow-sm">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div>
-            <span className="text-xs text-slate-400 block">Total Hari Bursa</span>
-            <div className="flex items-baseline gap-1 mt-1">
-              <span className="text-2xl font-bold font-mono text-white">
+      {/* Overview Metric Banner - Eye Catching Gradient */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white p-6 shadow-xl border border-indigo-900/60">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="space-y-1">
+            <span className="text-xs font-semibold text-indigo-300 block uppercase tracking-wider">
+              Total Hari Bursa
+            </span>
+            <div className="flex items-baseline gap-1.5 mt-1">
+              <span className="text-3xl font-extrabold font-mono text-white tracking-tight">
                 {timeline.totalTradingDaysSpan}
               </span>
-              <span className="text-xs text-slate-400">Hari Bursa</span>
+              <span className="text-xs font-semibold text-indigo-200">Hari Bursa</span>
             </div>
+            <p className="text-[11px] text-slate-400">Dihitung murni hari kerja BEI</p>
           </div>
-          <div>
-            <span className="text-xs text-slate-400 block">Total Rentang Kalender</span>
-            <div className="flex items-baseline gap-1 mt-1">
-              <span className="text-2xl font-bold font-mono text-white">
+
+          <div className="space-y-1">
+            <span className="text-xs font-semibold text-indigo-300 block uppercase tracking-wider">
+              Rentang Kalender
+            </span>
+            <div className="flex items-baseline gap-1.5 mt-1">
+              <span className="text-3xl font-extrabold font-mono text-cyan-300 tracking-tight">
                 {timeline.totalCalendarDaysSpan}
               </span>
-              <span className="text-xs text-slate-400">Hari Kalender</span>
+              <span className="text-xs font-semibold text-cyan-200">Hari Kalender</span>
             </div>
+            <p className="text-[11px] text-slate-400">Termasuk akhir pekan &amp; libur</p>
           </div>
-          <div>
-            <span className="text-xs text-slate-400 block">Dasar Regulasi BEI</span>
+
+          <div className="space-y-1">
+            <span className="text-xs font-semibold text-indigo-300 block uppercase tracking-wider">
+              Dasar Regulasi BEI
+            </span>
             <div className="mt-1">
-              <span className="text-sm font-semibold text-blue-300 block font-mono">
-                Peraturan Nomor I-E
+              <span className="text-base font-bold text-amber-300 block font-mono">
+                Peraturan I-E
               </span>
-              <span className="text-[11px] text-slate-400">Kep-00087/BEI/12-2025</span>
+              <span className="text-xs text-slate-300">Kep-00087/BEI/12-2025</span>
             </div>
           </div>
-          <div>
-            <span className="text-xs text-slate-400 block">Status Pelaksanaan</span>
+
+          <div className="space-y-1">
+            <span className="text-xs font-semibold text-indigo-300 block uppercase tracking-wider">
+              Status Pelaksanaan
+            </span>
             <div className="mt-1">
-              <span className="inline-flex items-center text-xs font-semibold text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-300 bg-emerald-950/80 px-3 py-1 rounded-lg border border-emerald-500/40 shadow-xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 Wajib Dilaporkan di SPE
               </span>
             </div>
@@ -94,29 +110,29 @@ export const TimelineVisualizer: React.FC<TimelineVisualizerProps> = ({ timeline
       </div>
 
       {/* Visual Step Pipeline Header */}
-      <div className="hidden lg:block bg-white rounded-xl border border-slate-200 p-4">
+      <div className="hidden lg:block bg-white rounded-2xl border border-slate-200/90 p-5 shadow-sm">
         <div className="grid grid-cols-4 relative">
-          <div className="absolute top-5 left-12 right-12 h-0.5 bg-slate-200 -z-0" />
+          <div className="absolute top-6 left-12 right-12 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-full opacity-30 -z-0" />
           {timeline.milestones.map((stage) => {
             const isTarget = stage.stageNumber === 3;
             return (
               <div key={stage.id} className="flex flex-col items-center text-center px-2 z-10">
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs font-mono transition-transform ${
+                  className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-sm font-mono transition-all duration-300 shadow-md ${
                     isTarget
-                      ? 'bg-blue-600 text-white ring-4 ring-blue-100'
-                      : 'bg-white border-2 border-slate-700 text-slate-800 shadow-xs'
+                      ? 'bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 text-white ring-4 ring-blue-100 scale-110 animate-float-soft'
+                      : 'bg-white border-2 border-slate-300 text-slate-800 hover:border-blue-500 hover:scale-105'
                   }`}
                 >
                   0{stage.stageNumber}
                 </div>
-                <span className="mt-2 text-xs font-bold text-slate-900 line-clamp-1">
+                <span className="mt-3 text-xs font-extrabold text-slate-900 line-clamp-1">
                   {stage.title}
                 </span>
-                <span className="text-[11px] font-mono font-medium text-blue-700 mt-0.5">
+                <span className="text-[11px] font-mono font-bold text-indigo-600 mt-0.5 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
                   {stage.dayOffsetLabel}
                 </span>
-                <span className="text-[11px] text-slate-500 font-mono mt-0.5">
+                <span className="text-[11px] text-slate-500 font-mono mt-1">
                   {stage.formattedDate.split(', ')[1]}
                 </span>
               </div>
@@ -138,21 +154,21 @@ export const TimelineVisualizer: React.FC<TimelineVisualizerProps> = ({ timeline
           return (
             <div
               key={milestone.id}
-              className={`bg-white rounded-xl border transition-all ${
+              className={`bg-white rounded-2xl border transition-all duration-200 hover:shadow-md ${
                 isPelaksanaan
-                  ? 'border-blue-300 ring-1 ring-blue-100 shadow-sm'
-                  : 'border-slate-200 shadow-xs'
+                  ? 'border-blue-400 ring-2 ring-blue-100 shadow-md bg-gradient-to-b from-blue-50/20 to-white'
+                  : 'border-slate-200/90 shadow-xs'
               }`}
             >
               {/* Card Header */}
-              <div className="p-4 sm:p-5">
+              <div className="p-5 sm:p-6">
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-3.5">
                     <div
-                      className={`w-10 h-10 rounded-lg flex items-center justify-center font-mono font-bold text-sm shrink-0 ${
+                      className={`w-11 h-11 rounded-xl flex items-center justify-center font-mono font-extrabold text-sm shrink-0 shadow-xs ${
                         isPelaksanaan
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-slate-100 text-slate-900 border border-slate-200'
+                          ? 'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-blue-500/25'
+                          : 'bg-slate-100 text-slate-800 border border-slate-200'
                       }`}
                     >
                       0{milestone.stageNumber}
@@ -160,15 +176,15 @@ export const TimelineVisualizer: React.FC<TimelineVisualizerProps> = ({ timeline
 
                     <div className="space-y-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-xs font-semibold font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-700">
+                        <span className="text-xs font-bold font-mono px-2.5 py-0.5 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200/80">
                           {milestone.dayOffsetLabel}
                         </span>
                         <span className="text-xs text-slate-500 font-mono">
                           {milestone.regulationRef}
                         </span>
                         {isPelaksanaan && (
-                          <span className="text-[11px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                            Hari H Pelaksanaan
+                          <span className="text-[11px] font-bold text-blue-700 bg-blue-100/70 px-2.5 py-0.5 rounded-md border border-blue-300">
+                            Hari H Acara
                           </span>
                         )}
                       </div>
@@ -193,16 +209,16 @@ export const TimelineVisualizer: React.FC<TimelineVisualizerProps> = ({ timeline
 
                     <div className="flex items-center gap-2">
                       {milestone.status === 'today' ? (
-                        <span className="px-2.5 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300 animate-pulse">
                           Hari Ini
                         </span>
                       ) : milestone.status === 'past' ? (
-                        <span className="px-2.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600">
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
                           Telah Berlalu
                         </span>
                       ) : (
-                        <span className="px-2.5 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
-                          Tersisa {milestone.tradingDaysRemaining} Hari Bursa ({milestone.daysRemaining} hari kalender)
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-300">
+                          Tersisa {milestone.tradingDaysRemaining} Hari Bursa
                         </span>
                       )}
                     </div>
