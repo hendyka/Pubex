@@ -9,6 +9,7 @@ import {
   Printer,
   Link2,
   FileDown,
+  FileSpreadsheet,
 } from 'lucide-react';
 import { TimelineResult, PubexConfig } from '../types';
 import { generateICSContent, generateWhatsAppMessage } from '../utils/calculator';
@@ -112,6 +113,95 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             >
               <FileDown className="w-3.5 h-3.5" />
               <span>Unduh .ICS</span>
+            </button>
+          </div>
+
+          {/* Option 2: Excel Spreadsheet (.xls) */}
+          <div className="p-4 rounded-xl border border-slate-200 hover:border-emerald-300 transition-all bg-white flex items-start justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 font-bold text-slate-900 text-xs">
+                <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+                <span>Unduh Spreadsheet Matriks &amp; Audit (.XLS)</span>
+              </div>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Ekspor tabel lengkap 4 tahap kepatuhan dan audit day-by-day hari bursa untuk pelaporan ke Microsoft Excel.
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                const stock = timeline.config.stockCode || 'EMITEN';
+                const filename = `matriks_kalender_audit_pubex_${stock}.xls`;
+                const rowsHtml = timeline.auditTrail
+                  .map((d) => {
+                    const isM = !!d.milestoneEvent;
+                    const tipe = d.isExchangeTradingDay ? 'Hari Bursa Aktif' : d.isWeekend ? 'Akhir Pekan' : 'Libur Bursa / Nasional';
+                    const msLabel = d.milestoneEvent ? `Tahap 0${d.milestoneEvent.stageNumber}: ${d.milestoneEvent.title} (${d.milestoneEvent.dayOffsetLabel})` : '-';
+                    const bg = isM ? 'bgcolor="#dbeafe"' : !d.isExchangeTradingDay ? 'bgcolor="#f8fafc"' : 'bgcolor="#ffffff"';
+                    return `<tr ${bg}>
+                      <td style="border:1px solid #cbd5e1; padding:6px; font-family:monospace;">${d.date}</td>
+                      <td style="border:1px solid #cbd5e1; padding:6px;">${d.dayName}</td>
+                      <td style="border:1px solid #cbd5e1; padding:6px;">${tipe}</td>
+                      <td style="border:1px solid #cbd5e1; padding:6px;">${d.holidayName || '-'}</td>
+                      <td style="border:1px solid #cbd5e1; padding:6px; text-align:center; font-weight:bold;">${d.tradingDayCounter ? '#' + d.tradingDayCounter : '-'}</td>
+                      <td style="border:1px solid #cbd5e1; padding:6px; font-weight:${isM ? 'bold' : 'normal'};">${msLabel}</td>
+                    </tr>`;
+                  })
+                  .join('');
+
+                const milestonesHtml = timeline.milestones
+                  .map(
+                    (m) => `<tr>
+                      <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold; background-color:#eff6ff;">Tahap 0${m.stageNumber}</td>
+                      <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">${m.title}</td>
+                      <td style="border:1px solid #cbd5e1; padding:6px;">${m.formattedDate}</td>
+                      <td style="border:1px solid #cbd5e1; padding:6px; text-align:center;">${m.dayOffsetLabel}</td>
+                      <td style="border:1px solid #cbd5e1; padding:6px;">${m.regulationRef}</td>
+                    </tr>`
+                  )
+                  .join('');
+
+                const excelTemplate = `
+                  <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                  <head>
+                    <meta http-equiv="content-type" content="text/plain; charset=UTF-8"/>
+                  </head>
+                  <body>
+                    <h2>MATRIKS KALENDER & AUDIT HARI BURSA PUBLIC EXPOSE</h2>
+                    <p>Perusahaan: <strong>${timeline.config.companyName} (${timeline.config.stockCode})</strong> | Regulasi: <strong>Kep-00087/BEI/12-2025</strong></p>
+                    <h3>1. RINGKASAN 4 TAHAP KEPATUHAN</h3>
+                    <table border="1" style="border-collapse:collapse; width:100%;">
+                      <thead>
+                        <tr bgcolor="#1e293b" style="color:#ffffff;">
+                          <th>Tahap</th><th>Nama Batas Waktu</th><th>Tanggal Pelaksanaan</th><th>Ketentuan BEI</th><th>Dasar Regulasi</th>
+                        </tr>
+                      </thead>
+                      <tbody>${milestonesHtml}</tbody>
+                    </table>
+                    <h3>2. RINCIAN AUDIT HARIAN</h3>
+                    <table border="1" style="border-collapse:collapse; width:100%;">
+                      <thead>
+                        <tr bgcolor="#1e293b" style="color:#ffffff;">
+                          <th>Tanggal</th><th>Hari</th><th>Klasifikasi Hari</th><th>Keterangan Libur</th><th>Urutan Hari Bursa</th><th>Milestone</th>
+                        </tr>
+                      </thead>
+                      <tbody>${rowsHtml}</tbody>
+                    </table>
+                  </body>
+                  </html>
+                `;
+                const blob = new Blob([excelTemplate], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(link.href);
+              }}
+              className="px-3 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-semibold shrink-0 inline-flex items-center gap-1.5 transition-colors shadow-xs"
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5" />
+              <span>Unduh Excel</span>
             </button>
           </div>
 
