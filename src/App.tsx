@@ -239,7 +239,7 @@ export default function App() {
         )}
 
         {activeTab === 'audit' && (
-          <DayAuditTable timeline={timeline} />
+          <DayAuditTable timeline={timeline} holidays={holidays} />
         )}
 
         {activeTab === 'guidelines' && (
