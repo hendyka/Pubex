@@ -10,6 +10,56 @@
   }
 }
 
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.4), 0 0 30px rgba(99, 102, 241, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(59, 130, 246, 0.7), 0 0 45px rgba(99, 102, 241, 0.35);
+  }
+}
+
+@keyframes floatSoft {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes shimmerGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.animate-float-soft {
+  animation: floatSoft 4s ease-in-out infinite;
+}
+
+.shimmer-bg {
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 35%, #172554 70%, #0f172a 100%);
+  background-size: 200% 200%;
+  animation: shimmerGradient 12s ease infinite;
+}
+
+.gradient-border {
+  position: relative;
+  background: linear-gradient(to right, #3b82f6, #6366f1, #8b5cf6);
+  padding: 1px;
+}
+
 @media print {
   @page {
     margin: 1.5cm;
