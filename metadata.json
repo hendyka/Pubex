@@ -1,0 +1,6 @@
+{
+  "name": "Kalkulator Timeline Public Expose BEI",
+  "description": "Kalkulator timeline kepatuhan Public Expose Bursa Efek Indonesia sesuai Kep-00087/BEI/12-2025 Peraturan Nomor I-E dengan perhitungan Hari Bursa akurat dan checklist kepatuhan.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
